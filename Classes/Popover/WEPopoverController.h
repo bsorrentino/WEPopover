@@ -51,6 +51,10 @@
 
 - (void)dismissPopoverAnimated:(BOOL)animated;
 
+- (void)presentPopoverFromBarButtonItem:(UIBarButtonItem *)item toolBar:(UIToolbar *)toolBar
+               permittedArrowDirections:(UIPopoverArrowDirection)arrowDirections 
+                               animated:(BOOL)animated;
+
 - (void)presentPopoverFromBarButtonItem:(UIBarButtonItem *)item 
 			   permittedArrowDirections:(UIPopoverArrowDirection)arrowDirections 
 							   animated:(BOOL)animated;

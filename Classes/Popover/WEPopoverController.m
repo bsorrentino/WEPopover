@@ -1,4 +1,4 @@
-//
+    //
 //  WEPopoverController.m
 //  WEPopover
 //
@@ -103,6 +103,35 @@
 - (void)dismissPopoverAnimated:(BOOL)animated {
 	
 	[self dismissPopoverAnimated:animated userInitiated:NO];
+}
+
+- (void)presentPopoverFromBarButtonItem:(UIBarButtonItem *)item toolBar:(UIToolbar *)toolBar
+               permittedArrowDirections:(UIPopoverArrowDirection)arrowDirections 
+                               animated:(BOOL)animated 
+{
+    
+    UIView *v = [self keyView];
+    UIButton *button = nil;
+    
+    for (UIView *subview in toolBar.subviews) 
+    {
+        if ([[subview class].description isEqualToString:@"UIToolbarButton"])
+        {
+            for (id target in [(UIButton *)subview allTargets]) 
+            {
+                if (target == item) 
+                {
+                    button = (UIButton *)subview;
+                    break;
+                }
+            }
+            if (button != nil) break;
+        }
+    }
+    
+    CGRect rect = [button.superview convertRect:button.frame toView:v];
+    
+    [self presentPopoverFromRect:rect inView:v permittedArrowDirections:arrowDirections animated:animated];
 }
 
 - (void)presentPopoverFromBarButtonItem:(UIBarButtonItem *)item 
