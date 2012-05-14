@@ -13,6 +13,14 @@
 @synthesize bgImageName, upArrowImageName, downArrowImageName, leftArrowImageName, rightArrowImageName, topBgMargin, bottomBgMargin, leftBgMargin, rightBgMargin, topBgCapSize, leftBgCapSize;
 @synthesize leftContentMargin, rightContentMargin, topContentMargin, bottomContentMargin, arrowMargin;
 
+- (void)dealloc {
+	self.bgImageName = nil;
+	self.upArrowImageName = nil;
+	self.downArrowImageName = nil;
+	self.leftArrowImageName = nil;
+	self.rightArrowImageName = nil;
+	[super dealloc];
+}
 
 @end
 
@@ -44,7 +52,7 @@ permittedArrowDirections:(UIPopoverArrowDirection)permittedArrowDirections
 		[self initFrame];
 		self.backgroundColor = [UIColor clearColor];
 		UIImage *theImage = [UIImage imageNamed:properties.bgImageName];
-		bgImage = [theImage stretchableImageWithLeftCapWidth:properties.leftBgCapSize topCapHeight:properties.topBgCapSize];
+		bgImage = [[theImage stretchableImageWithLeftCapWidth:properties.leftBgCapSize topCapHeight:properties.topBgCapSize] retain];
 		
 		self.clipsToBounds = YES;
 		self.userInteractionEnabled = YES;
@@ -52,6 +60,13 @@ permittedArrowDirections:(UIPopoverArrowDirection)permittedArrowDirections
 	return self;
 }
 
+- (void)dealloc {
+	[properties release];
+	[contentView release];
+	[bgImage release];
+	[arrowImage release];
+	[super dealloc];
+}
 
 - (void)drawRect:(CGRect)rect {
 	[bgImage drawInRect:bgRect blendMode:kCGBlendModeNormal alpha:1.0];
@@ -87,7 +102,8 @@ permittedArrowDirections:(UIPopoverArrowDirection)permittedArrowDirections
 
 - (void)setContentView:(UIView *)v {
 	if (v != contentView) {
-		contentView = v;		
+		[contentView release];
+		contentView = [v retain];		
 		contentView.frame = self.contentRect;		
 		[self addSubview:contentView];
 	}
@@ -124,7 +140,8 @@ permittedArrowDirections:(UIPopoverArrowDirection)permittedArrowDirections
 
 - (void)setProperties:(WEPopoverContainerViewProperties *)props {
 	if (properties != props) {
-		properties = props;
+		[properties release];
+		properties = [props retain];
 	}
 }
 
@@ -328,16 +345,16 @@ permittedArrowDirections:(UIPopoverArrowDirection)permittedArrowDirections
 	
 	switch (arrowDirection) {
 		case UIPopoverArrowDirectionUp:
-			arrowImage = upArrowImage;
+			arrowImage = [upArrowImage retain];
 			break;
 		case UIPopoverArrowDirectionDown:
-			arrowImage = downArrowImage;
+			arrowImage = [downArrowImage retain];
 			break;
 		case UIPopoverArrowDirectionLeft:
-			arrowImage = leftArrowImage;
+			arrowImage = [leftArrowImage retain];
 			break;
 		case UIPopoverArrowDirectionRight:
-			arrowImage = rightArrowImage;
+			arrowImage = [rightArrowImage retain];
 			break;
 	}
 }

@@ -24,27 +24,27 @@
  */
 @interface WEPopoverController : NSObject<WETouchableViewDelegate> {
 	UIViewController *contentViewController;
-	UIView *__unsafe_unretained view;
+	UIView *view;
 	WETouchableView *backgroundView;
 	
 	BOOL popoverVisible;
 	UIPopoverArrowDirection popoverArrowDirection;
-	id <WEPopoverControllerDelegate> __unsafe_unretained delegate;
+	id <WEPopoverControllerDelegate> delegate;
 	CGSize popoverContentSize;
 	WEPopoverContainerViewProperties *containerViewProperties;
 	id <NSObject> context;
 	NSArray *passthroughViews;	
 }
 
-@property(nonatomic) UIViewController *contentViewController;
+@property(nonatomic, retain) UIViewController *contentViewController;
 
-@property (unsafe_unretained, nonatomic, readonly) UIView *view;
+@property (nonatomic, readonly) UIView *view;
 @property (nonatomic, readonly, getter=isPopoverVisible) BOOL popoverVisible;
 @property (nonatomic, readonly) UIPopoverArrowDirection popoverArrowDirection;
-@property (nonatomic, unsafe_unretained) id <WEPopoverControllerDelegate> delegate;
+@property (nonatomic, assign) id <WEPopoverControllerDelegate> delegate;
 @property (nonatomic, assign) CGSize popoverContentSize;
-@property (nonatomic) WEPopoverContainerViewProperties *containerViewProperties;
-@property (nonatomic) id <NSObject> context;
+@property (nonatomic, retain) WEPopoverContainerViewProperties *containerViewProperties;
+@property (nonatomic, retain) id <NSObject> context;
 @property (nonatomic, copy) NSArray *passthroughViews;
 
 - (id)initWithContentViewController:(UIViewController *)theContentViewController;
