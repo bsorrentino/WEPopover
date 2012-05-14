@@ -13,6 +13,7 @@
 @synthesize bgImageName, upArrowImageName, downArrowImageName, leftArrowImageName, rightArrowImageName, topBgMargin, bottomBgMargin, leftBgMargin, rightBgMargin, topBgCapSize, leftBgCapSize;
 @synthesize leftContentMargin, rightContentMargin, topContentMargin, bottomContentMargin, arrowMargin;
 
+#if !__has_feature(objc_arc)        
 - (void)dealloc {
 	self.bgImageName = nil;
 	self.upArrowImageName = nil;
@@ -21,6 +22,7 @@
 	self.rightArrowImageName = nil;
 	[super dealloc];
 }
+#endif
 
 @end
 
@@ -52,13 +54,21 @@ permittedArrowDirections:(UIPopoverArrowDirection)permittedArrowDirections
 		[self initFrame];
 		self.backgroundColor = [UIColor clearColor];
 		UIImage *theImage = [UIImage imageNamed:properties.bgImageName];
+        
+#if !__has_feature(objc_arc)        
+        
 		bgImage = [[theImage stretchableImageWithLeftCapWidth:properties.leftBgCapSize topCapHeight:properties.topBgCapSize] retain];
-		
+#else
+		bgImage = [theImage stretchableImageWithLeftCapWidth:properties.leftBgCapSize topCapHeight:properties.topBgCapSize];
+        
+#endif		
 		self.clipsToBounds = YES;
 		self.userInteractionEnabled = YES;
 	}
 	return self;
 }
+
+#if !__has_feature(objc_arc)        
 
 - (void)dealloc {
 	[properties release];
@@ -67,6 +77,8 @@ permittedArrowDirections:(UIPopoverArrowDirection)permittedArrowDirections
 	[arrowImage release];
 	[super dealloc];
 }
+
+#endif
 
 - (void)drawRect:(CGRect)rect {
 	[bgImage drawInRect:bgRect blendMode:kCGBlendModeNormal alpha:1.0];
@@ -102,8 +114,13 @@ permittedArrowDirections:(UIPopoverArrowDirection)permittedArrowDirections
 
 - (void)setContentView:(UIView *)v {
 	if (v != contentView) {
+#if !__has_feature(objc_arc)
+        
 		[contentView release];
 		contentView = [v retain];		
+#else
+		contentView = v;		
+#endif        
 		contentView.frame = self.contentRect;		
 		[self addSubview:contentView];
 	}
@@ -140,8 +157,13 @@ permittedArrowDirections:(UIPopoverArrowDirection)permittedArrowDirections
 
 - (void)setProperties:(WEPopoverContainerViewProperties *)props {
 	if (properties != props) {
+#if !__has_feature(objc_arc)
+        
 		[properties release];
 		properties = [props retain];
+#else
+		properties = props;
+#endif        
 	}
 }
 
@@ -344,6 +366,7 @@ permittedArrowDirections:(UIPopoverArrowDirection)permittedArrowDirections
 	}
 	
 	switch (arrowDirection) {
+#if !__has_feature(objc_arc)                    
 		case UIPopoverArrowDirectionUp:
 			arrowImage = [upArrowImage retain];
 			break;
@@ -356,7 +379,21 @@ permittedArrowDirections:(UIPopoverArrowDirection)permittedArrowDirections
 		case UIPopoverArrowDirectionRight:
 			arrowImage = [rightArrowImage retain];
 			break;
-	}
+#else
+        case UIPopoverArrowDirectionUp:
+            arrowImage = upArrowImage;
+            break;
+        case UIPopoverArrowDirectionDown:
+            arrowImage = downArrowImage;
+            break;
+        case UIPopoverArrowDirectionLeft:
+            arrowImage = leftArrowImage;
+            break;
+        case UIPopoverArrowDirectionRight:
+            arrowImage = rightArrowImage;
+            break;
+#endif    
+    }
 }
 
 @end

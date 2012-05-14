@@ -24,13 +24,21 @@
  */
 @interface WETouchableView : UIView {
 	BOOL touchForwardingDisabled;
+#if !__has_feature(objc_arc)
 	id <WETouchableViewDelegate> delegate;
+#else
+	id <WETouchableViewDelegate> __unsafe_unretained delegate;
+#endif
 	NSArray *passthroughViews;
 	BOOL testHits;
 }
 
 @property (nonatomic, assign) BOOL touchForwardingDisabled;
+#if !__has_feature(objc_arc)
 @property (nonatomic, assign) id <WETouchableViewDelegate> delegate;
+#else
+@property (nonatomic, unsafe_unretained) id <WETouchableViewDelegate> delegate;
+#endif
 @property (nonatomic, copy) NSArray *passthroughViews;
 
 @end

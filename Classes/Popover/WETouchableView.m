@@ -18,10 +18,12 @@
 
 @synthesize touchForwardingDisabled, delegate, passthroughViews;
 
+#if !__has_feature(objc_arc)
 - (void)dealloc {
 	[passthroughViews release];
 	[super dealloc];
 }
+#endif
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
 	if (testHits) {

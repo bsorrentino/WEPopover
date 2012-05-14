@@ -49,6 +49,8 @@
 	return self;
 }
 
+#if !__has_feature(objc_arc)        
+
 - (void)dealloc {
 	[self dismissPopoverAnimated:NO];
 	[contentViewController release];
@@ -58,17 +60,25 @@
 	[super dealloc];
 }
 
+#endif
+
 - (void)setContentViewController:(UIViewController *)vc {
 	if (vc != contentViewController) {
+#if !__has_feature(objc_arc)        
 		[contentViewController release];
 		contentViewController = [vc retain];
+#else
+		contentViewController = vc;
+#endif
 		popoverContentSize = CGSizeZero;
 	}
 }
 
 //Overridden setter to copy the passthroughViews to the background view if it exists already
 - (void)setPassthroughViews:(NSArray *)array {
+#if !__has_feature(objc_arc)        
 	[passthroughViews release];
+#endif
 	passthroughViews = nil;
 	if (array) {
 		passthroughViews = [[NSArray alloc] initWithArray:array];
@@ -88,11 +98,16 @@
 		[self.view removeFromSuperview];
 		self.view = nil;
 		[backgroundView removeFromSuperview];
+#if !__has_feature(objc_arc)        
 		[backgroundView release];
+#endif        
 		backgroundView = nil;
-		
+
+#if !__has_feature(objc_arc)		
 		BOOL userInitiatedDismissal = [(NSNumber *)theContext boolValue];
-		
+#else
+		BOOL userInitiatedDismissal = [(__bridge NSNumber *)theContext boolValue];
+#endif		
 		if (userInitiatedDismissal) {
 			//Only send message to delegate in case the user initiated this event, which is if he touched outside the view
 			[delegate popoverControllerDidDismissPopover:self];
@@ -162,7 +177,12 @@
 	CGRect displayArea = [self displayAreaForView:theView];
 	
 	WEPopoverContainerViewProperties *props = self.containerViewProperties ? self.containerViewProperties : [self defaultContainerViewProperties];
+#if !__has_feature(objc_arc)		
 	WEPopoverContainerView *containerView = [[[WEPopoverContainerView alloc] initWithSize:self.popoverContentSize anchorRect:rect displayArea:displayArea permittedArrowDirections:arrowDirections properties:props] autorelease];
+#else
+	WEPopoverContainerView *containerView = [[WEPopoverContainerView alloc] initWithSize:self.popoverContentSize anchorRect:rect displayArea:displayArea permittedArrowDirections:arrowDirections properties:props];
+#endif            
+
 	popoverArrowDirection = containerView.arrowDirection;
 	
 	UIView *keyView = self.keyView;
@@ -254,8 +274,13 @@
 
 - (void)setView:(UIView *)v {
 	if (view != v) {
+#if !__has_feature(objc_arc)		
+        
 		[view release];
 		view = [v retain];
+#else
+		view = v;
+#endif        
 	}
 }
 
@@ -272,7 +297,12 @@
 		if (animated) {
 			
 			self.view.userInteractionEnabled = NO;
+#if !__has_feature(objc_arc)		
+            
 			[UIView beginAnimations:@"FadeOut" context:[NSNumber numberWithBool:userInitiated]];
+#else
+			[UIView beginAnimations:@"FadeOut" context:(__bridge void*)[NSNumber numberWithBool:userInitiated]];
+#endif            
 			[UIView setAnimationDelegate:self];
 			[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:context:)];
 			
@@ -286,7 +316,9 @@
 			[self.view removeFromSuperview];
 			self.view = nil;
 			[backgroundView removeFromSuperview];
+#if !__has_feature(objc_arc)
 			[backgroundView release];
+#endif            
 			backgroundView = nil;
 		}
 	}
@@ -304,8 +336,11 @@
 
 //Enable to use the simple popover style
 - (WEPopoverContainerViewProperties *)defaultContainerViewProperties {
+#if !__has_feature(objc_arc)
 	WEPopoverContainerViewProperties *ret = [[WEPopoverContainerViewProperties new] autorelease];
-	
+#else
+	WEPopoverContainerViewProperties *ret = [WEPopoverContainerViewProperties new];
+#endif
 	CGSize imageSize = CGSizeMake(30.0f, 30.0f);
 	NSString *bgImageName = @"popoverBgSimple.png";
 	CGFloat bgMargin = 6.0;
